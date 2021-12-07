@@ -11,29 +11,26 @@ function lineParser() {
     };
 };
 
-function entryProcessor(previousState, entry) {
-    console.log(`entryProcessor(${JSON.stringify(previousState)}, ${JSON.stringify(entry)})...`);
-
-
-    console.log(`bitsProcessor(${JSON.stringify(previousState)}, ${JSON.stringify(entry)}) gives\n${JSON.stringify(newState)}`);
-    return newState;
-};
-
-
+function sumNumbersTo(n){
+    return n*(n+1)/2
+}
 async function main() {
     try {
         const crabPositions = (await getLines.processLines(path.resolve(__dirname, input), lineParser()))[0];
         //crabPositions.sort((a,b)=>(a-b));
+        const left = Math.min(...crabPositions);
+        const right = Math.max(...crabPositions);
+        const furthestDistance = right-left;
         console.log(`Crab positions in order: ${JSON.stringify(crabPositions)}`)
 
         const costs = [];
-        for (p = 0; p < crabPositions.length; p++) {
-            const possiblePosition = crabPositions[p];
+        for (p = 0; p < furthestDistance ; p++) {
+            const possiblePosition = left+p;
             const costsAtThatPosition = crabPositions.map(position => Math.abs(position - possiblePosition) );
             //console.log(`Crab positions in order:       ${JSON.stringify(crabPositions)}`)
             //console.log(`Moving everyone to ${possiblePosition} will cost ${JSON.stringify(costsAtThatPosition)} fuel`)
-            const costAtThatPosition = crabPositions.reduce((totalCost, position) => totalCost + Math.abs(position - possiblePosition), 0 );
-            console.log(`Moving everyone to ${possiblePosition} will cost ${costAtThatPosition} fuel`)
+            const costAtThatPosition = costsAtThatPosition.reduce((totalCost, cost) => totalCost + cost, 0 );
+            //console.log(`Moving everyone to ${possiblePosition} will cost ${costAtThatPosition} fuel`)
             costs.push(costAtThatPosition);
         }
         //console.log(`Costs: ${JSON.stringify(costs)}`)
