@@ -21,7 +21,9 @@ function lineParser() {
         parts = line.split('|');
         console.log(` parts : ${JSON.stringify(parts)}`)
         rawSignalPatterns = parts[0].trim();
-        rawSignalDigits = rawSignalPatterns.split(' ').map(s => s.split('').sort().join(''));
+        // digits and values don't come up in same order
+        // need to alphabetise everything for comparison and matching
+        rawSignalDigits = rawSignalPatterns.split(' ').map(s => s.split('').sort().join('')); 
         console.log(` rawSignalDigits : ${JSON.stringify(rawSignalDigits)}`)
 
         knownDigits = ['', '', '', '', '', '', '', '', '']
@@ -29,7 +31,6 @@ function lineParser() {
         console.log(`Find 2,4,7,8...`);
         for (digit of rawSignalDigits) {
             console.log(`${digit}`);
-            // find a 6 segment long digit that contains a segment not found in 1
             switch (digit.length) {
                 case 2:
                     knownDigits[1] = digit;
@@ -49,29 +50,27 @@ function lineParser() {
         }
         console.log(` ${JSON.stringify(knownDigits)}`);
 
-        console.log(`Find 6...`); // find a 6 segment long digit that contains 1 segment not found in 1
+        console.log(`Find 6...`); // find a 6-segment digit that contains 1 segment not found in 1
         knownDigits[6] = rawSignalDigits.filter(digit => digit.length == 6 && differsByXSegments(digit, knownDigits[1], 1)).pop();
         console.log(` ${knownDigits[6]} is 6 ***********`);
 
-        console.log(`Find 9...`); // find a 6 segment long digit that contains 4 segments also found in 4
+        console.log(`Find 9...`); // find a 6-segment digit that shares 4 segments with  4
         knownDigits[9] = rawSignalDigits.filter(digit => !knownDigits.includes(digit) && digit.length == 6 && differsByXSegments(knownDigits[4], digit, 2)).pop();
         console.log(` ${knownDigits[9]} is 9 ***********`)
 
-        console.log(`Find 0...`); // The remaining 6-segment element is 0
+        console.log(`Find 0...`); // The remaining 6-segment digit is 0
         knownDigits[0] = rawSignalDigits.filter(digit => !knownDigits.includes(digit) && digit.length == 6).pop()
         console.log(` ${knownDigits[0]} is 0 ***********`)
 
-        console.log(`Find 3...`); // Of the elements with 5 elements, only 3 has 2 segments in common with 1
+        console.log(`Find 3...`); // Of the 5-segment digits, only 3 shares 2 segments with 1
         knownDigits[3] = rawSignalDigits.filter(digit => !knownDigits.includes(digit) && digit.length == 5 && shareXSegments(knownDigits[1], digit, 2)).pop();
         console.log(` ${knownDigits[3]} is 3 ***********`)
 
-
-        console.log(`Find 2...`); // Of the elements with 5 elements, only 2 has 2 elements in common with 4
+        console.log(`Find 2...`); // Of the 5-segment digits, only 2 shares 2 segments with 4
         knownDigits[2] = rawSignalDigits.filter(digit => !knownDigits.includes(digit) && digit.length == 5 && shareXSegments(knownDigits[4], digit, 2)).pop();
         console.log(` ${knownDigits[2]} is 2 ***********`)
 
-
-        console.log(`Find 5...`); // The remaining 5-segment element is 5
+        console.log(`Find 5...`); // The remaining 5-segment digit is 5
         knownDigits[5] = rawSignalDigits.filter(digit => !knownDigits.includes(digit) && digit.length == 5).pop();
         console.log(` ${knownDigits[5]} is 5 ***********`)
 
@@ -111,7 +110,7 @@ async function main() {
         const totalEntriesValues = entries.reduce((total, entry) => {
             return total + entry.output;
         }, 0);
-        console.log(`Solution: ${totalEntriesValues}`);
+        console.log(`Solution: ${totalEntriesValues} : still 1055164?`);
     }
     catch (e) {
         console.error(e);
