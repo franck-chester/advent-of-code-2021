@@ -53,8 +53,12 @@ It's a bit like sudoku, figure our which order to eliminate possibilities
 ## Day 9: Smoke Basin
 
 First part is simple enough.
-Second part I haven't done - got a cold and just couldn't think.
-Main issue that worries me is connecting basin... I can see how to mark a cell as part of a basin (surrounded by cells of different height, not 9), but identifying th basin is beyond me
+Second part I haven't figure dout yet.
+Can solve th test case but not the full lot.
+I know hat I am looking for, I copied a solution from reddit, but can't see what it wrong with my solution.
+something to do with looking ahead...
+
+maybe I could cheat and do 2 passes, the second one joining up any basins that I have not spotted were joined ...
 ## Day 10: Syntax Scoring
 
 An easy one - but I have a cold and won't refactor my very basic implementation
