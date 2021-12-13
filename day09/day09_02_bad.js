@@ -1,8 +1,8 @@
 const getLines = require('../lib/getLines')
 const path = require('path')
 
-const input = './test.txt';
-//const input = './test2.txt';
+//const input = './test.txt';
+const input = './test2.txt';
 //const input = './input.txt';
 
 
@@ -24,39 +24,6 @@ function lookupBasin(r, c) {
         return basinsLookup.get(cellId(r, c));
     }
     return -1;
-}
-
-function setBasin(entries, r, c, r0, c0, rmax, cmax, b, padding) {
-    if (entries[r][c] == 9) {
-        console.log(`${padding}cell [${r}][${c}] is a peak`)
-        return;
-    }
-    if (basinsLookup.has(cellId(r, c))) {
-        // as we got from top to bottom, this should not happen
-        console.log(`${padding}[${r}][${c}] is already part of a basin !!!`)
-        return;
-    }
-    // add this cell
-    basinsLookup.set(cellId(r, r), b);
-    if (r > 0 && r-1 != r0) {
-        console.log(`${padding}spread up from [${r}][${c}]`);
-        setBasin(entries, r - 1, c, r, c, rmax, cmax, b, `${padding}-`)
-    }
-
-    if (c > 0 && c-1 != c0) {
-        console.log(`${padding}spread left from [${r}][${c}]`);
-        setBasin(entries, r, c-1, r, c, rmax, cmax, b, `${padding}-`)
-    }
-
-    if (c < cmax && c+1 != c0) {
-        console.log(`${padding}spread right from [${r}][${c}]`);
-        setBasin(entries, r, c + 1, r, c, rmax, cmax, b, `${padding}-`)
-    }
-
-    if (c < rmax && r+1 != r0) {
-        console.log(`${padding}spread down from [${r}][${c}]`);
-        setBasin(entries, r + 1, c, r, c, rmax, cmax, b, `${padding}-`)
-    }
 }
 
 async function main() {
@@ -83,15 +50,68 @@ async function main() {
                 // new basin
                 console.log(` cell [${r}][${c}] starts a new basin`)
                 basin = basins.push(1) - 1;
-                setBasin(entries, r, c, r, c, rmax, cmax, basin, '-')
+                basinsLookup.set(cellId(r, r), basin);
+
+                if (c > 0) {
+                    let R = r;
+                    let C = c;
+                    let stop = false;
+                    // and go left and down until we hit 9, or the edge
+                    console.log(` go left and down from [${R}][${C}]`)
+                    while (R <= rmax) {
+                        while (C >= 0) {
+                            if (R == r && C == c) {
+                                C--;
+                                continue
+                            }
+                            if (entries[R][C] == 9) {
+                                C--;
+                                break
+                            }
+                            console.log(`  ... add [${R}][${C}] to basin ${basin} *`)
+                            basinsLookup.set(cellId(R, C), basin);
+                            basins[basin]++;
+                            C--;
+                        }
+
+                        C = c;
+                        R++;
+                    }
+                }
+                if (c <= cmax) {
+                    R = r;
+                    C = c;
+                    let stop = false;
+                    // and go right and down until we hit 9, or the edge
+                    console.log(` go right and down from [${R}][${C}] : cmax = ${cmax}, rmax = ${rmax}`)
+                    while (R <= rmax) {
+                        while (C <= cmax) {
+                            if (R == r && C == c) {
+                                C++;
+                                continue
+                            }
+                            if (entries[R][C] == 9) {
+                                stop = true
+                                C++
+                                break
+                            }
+                            console.log(`  ... add [${R}][${C}] to basin ${basin}`)
+                            basinsLookup.set(cellId(R, C), basin);
+                            basins[basin]++;
+                            C++;
+                        }
+                        
+                        C = c;
+                        R++;
+                    }
+                }
+                console.log('  ------')
             }
-            console.log('************')
+
+            console.log(`basin sizes up to row [${r}] are ${basins}`)
+            //console.log(`Map :  ${JSON.stringify(Object.fromEntries(basinsLookup))}`)
+            console.log('------')
         }
-
-        console.log(`basin sizes up to row [${r}] are ${basins}`)
-        //console.log(`Map :  ${JSON.stringify(Object.fromEntries(basinsLookup))}`)
-        console.log('------')
-
 
         // pretty picture, like reddit, to see what  I have missed
         const codes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
