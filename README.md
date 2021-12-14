@@ -59,6 +59,17 @@ I know hat I am looking for, I copied a solution from reddit, but can't see what
 something to do with looking ahead...
 
 maybe I could cheat and do 2 passes, the second one joining up any basins that I have not spotted were joined ...
+or recursion...
 ## Day 10: Syntax Scoring
 
 An easy one - but I have a cold and won't refactor my very basic implementation
+
+## Day 11: Dumbo Octopus
+
+Weekend and ill, so not looked at it
+
+## Day 12: Passage Pathing
+
+Weekend, and ill, so not looked at it
+
+## Day 13: Transparent Origami
