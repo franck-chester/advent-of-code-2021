@@ -73,3 +73,7 @@ Weekend and ill, so not looked at it
 Weekend, and ill, so not looked at it
 
 ## Day 13: Transparent Origami
+
+Late doing it, but relatively easy.
+One smart(ish) thing I did was slice the array to reduce each iteration computation.
+Part 2 came naturally as I always log a lot before I can get my head around a problem
